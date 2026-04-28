@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OrderAPI.Core.Enums;
 using OrderAPI.Core.Models;
-using OrderAPI.DAL.Storage.Filters;
+using OrderAPI.DAL.Specifications.SeatHolds;
 
 namespace OrderAPI.DAL.Storage.GetSeatHolds
 {
@@ -22,9 +22,11 @@ namespace OrderAPI.DAL.Storage.GetSeatHolds
             ESeatSectionHoldStatus? status,
             CancellationToken ct)
         {
-            var query = _context.SeatHolds
-                .FilterByOrderId(orderId)
-                .FilterByStatus(status);
+            var query = _context.SeatHolds.AsQueryable();
+            if (orderId.HasValue)
+                query = query.Where(new SeatHoldByOrderIdSpecification(orderId.Value).ToExpression());
+            if (status.HasValue)
+                query = query.Where(new SeatHoldByStatusSpecification(status.Value).ToExpression());
 
             var totalCount = await query.CountAsync(ct);
 

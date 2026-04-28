@@ -21,5 +21,20 @@ namespace OrderAPI.DAL.Storage.UpdateSeatHold
 
             await _context.SaveChangesAsync(ct);
         }
+
+        public async Task UpdateAllByOrderIdAsync(Guid orderId, ESeatSectionHoldStatus status, CancellationToken ct)
+        {
+            var holds = await _context.SeatHolds
+                .Where(sh => sh.OderId == orderId)
+                .ToListAsync(ct);
+
+            foreach (var hold in holds)
+            {
+                hold.SeatHoldStatus = status;
+                hold.UpdatedAt = DateTimeOffset.UtcNow;
+            }
+
+            await _context.SaveChangesAsync(ct);
+        }
     }
 }

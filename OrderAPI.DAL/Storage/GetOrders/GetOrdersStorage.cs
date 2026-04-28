@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OrderAPI.Core.Enums;
 using OrderAPI.Core.Models;
-using OrderAPI.DAL.Storage.Filters;
+using OrderAPI.DAL.Specifications.Orders;
 
 namespace OrderAPI.DAL.Storage.GetOrders
 {
@@ -23,10 +23,13 @@ namespace OrderAPI.DAL.Storage.GetOrders
             EOrderStatus? status,
             CancellationToken ct)
         {
-            var query = _context.Orders
-                .FilterByCustomerId(customerId)
-                .FilterByEventId(eventId)
-                .FilterByStatus(status);
+            var query = _context.Orders.AsQueryable();
+            if (customerId.HasValue)
+                query = query.Where(new OrderByCustomerIdSpecification(customerId.Value).ToExpression());
+            if (eventId.HasValue)
+                query = query.Where(new OrderByEventIdSpecification(eventId.Value).ToExpression());
+            if (status.HasValue)
+                query = query.Where(new OrderByStatusSpecification(status.Value).ToExpression());
 
             var totalCount = await query.CountAsync(ct);
 

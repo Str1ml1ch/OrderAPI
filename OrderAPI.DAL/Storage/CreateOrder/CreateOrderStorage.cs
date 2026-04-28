@@ -31,5 +31,24 @@ namespace OrderAPI.DAL.Storage.CreateOrder
 
             return order.Id;
         }
+
+        public async Task<Guid> CreateWithIdAsync(Guid id, Guid customerId, Guid eventId, decimal totalAmount, ECurrency currency, EOrderStatus status, CancellationToken ct)
+        {
+            var order = new Order
+            {
+                Id = id,
+                CustomerId = customerId,
+                EventId = eventId,
+                TotalAmount = totalAmount,
+                Currency = currency,
+                OrderStatus = status,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync(ct);
+
+            return order.Id;
+        }
     }
 }

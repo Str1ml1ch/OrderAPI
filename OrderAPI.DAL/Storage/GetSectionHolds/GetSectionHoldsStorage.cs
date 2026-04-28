@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OrderAPI.Core.Enums;
 using OrderAPI.Core.Models;
-using OrderAPI.DAL.Storage.Filters;
+using OrderAPI.DAL.Specifications.SectionHolds;
 
 namespace OrderAPI.DAL.Storage.GetSectionHolds
 {
@@ -23,10 +23,13 @@ namespace OrderAPI.DAL.Storage.GetSectionHolds
             ESeatSectionHoldStatus? status,
             CancellationToken ct)
         {
-            var query = _context.SectionHolds
-                .FilterByOrderId(orderId)
-                .FilterBySectionId(sectionId)
-                .FilterByStatus(status);
+            var query = _context.SectionHolds.AsQueryable();
+            if (orderId.HasValue)
+                query = query.Where(new SectionHoldByOrderIdSpecification(orderId.Value).ToExpression());
+            if (sectionId.HasValue)
+                query = query.Where(new SectionHoldBySectionIdSpecification(sectionId.Value).ToExpression());
+            if (status.HasValue)
+                query = query.Where(new SectionHoldByStatusSpecification(status.Value).ToExpression());
 
             var totalCount = await query.CountAsync(ct);
 

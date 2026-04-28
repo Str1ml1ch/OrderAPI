@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.37111.16
@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderAPI.DAL", "OrderAPI.DA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderAPI.Core", "OrderAPI.Core\OrderAPI.Core.csproj", "{5FA705EA-B61A-470E-9FD7-CE7AB6F5A4F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderAPI.DAL.DependencyInjection", "OrderAPI.DAL.DependencyInjection\OrderAPI.DAL.DependencyInjection.csproj", "{E6C2134A-3C4B-4047-9951-C0635FA1B4E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderAPI.Domain", "OrderAPI.Domain\OrderAPI.Domain.csproj", "{3F8A1234-BCDE-4567-89AB-CDEF01234567}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,11 +29,10 @@ Global
 		{5FA705EA-B61A-470E-9FD7-CE7AB6F5A4F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FA705EA-B61A-470E-9FD7-CE7AB6F5A4F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FA705EA-B61A-470E-9FD7-CE7AB6F5A4F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E6C2134A-3C4B-4047-9951-C0635FA1B4E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E6C2134A-3C4B-4047-9951-C0635FA1B4E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E6C2134A-3C4B-4047-9951-C0635FA1B4E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E6C2134A-3C4B-4047-9951-C0635FA1B4E7}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
+		{3F8A1234-BCDE-4567-89AB-CDEF01234567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F8A1234-BCDE-4567-89AB-CDEF01234567}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F8A1234-BCDE-4567-89AB-CDEF01234567}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F8A1234-BCDE-4567-89AB-CDEF01234567}.Release|Any CPU.Build.0 = Release|Any CPU	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
