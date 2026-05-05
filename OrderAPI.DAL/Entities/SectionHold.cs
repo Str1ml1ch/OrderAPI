@@ -1,4 +1,4 @@
-﻿using OrderAPI.Core.Enums;
+using OrderAPI.Domain.Enums;
 using Shared.DAL.Entities;
 
 namespace OrderAPI.DAL.Entities

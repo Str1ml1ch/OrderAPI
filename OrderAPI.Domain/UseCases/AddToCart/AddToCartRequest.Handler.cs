@@ -1,11 +1,11 @@
 using MediatR;
-using OrderAPI.Core.Enums;
-using OrderAPI.Core.Models;
-using OrderAPI.DAL.Storage.CreateOrder;
-using OrderAPI.DAL.Storage.CreateOrderItem;
-using OrderAPI.DAL.Storage.CreateSeatHold;
-using OrderAPI.DAL.Storage.GetOrderById;
-using OrderAPI.DAL.Storage.UpdateOrder;
+using OrderAPI.Domain.Enums;
+using OrderAPI.Domain.Models;
+using OrderAPI.Domain.Storage.CreateOrder;
+using OrderAPI.Domain.Storage.CreateOrderItem;
+using OrderAPI.Domain.Storage.CreateSeatHold;
+using OrderAPI.Domain.Storage.GetOrderById;
+using OrderAPI.Domain.Storage.UpdateOrder;
 
 namespace OrderAPI.Domain.UseCases.AddToCart
 {

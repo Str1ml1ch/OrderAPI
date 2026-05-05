@@ -1,8 +1,8 @@
 using MediatR;
-using OrderAPI.Core.Enums;
-using OrderAPI.DAL.Storage.GetOrderById;
-using OrderAPI.DAL.Storage.UpdateOrder;
-using OrderAPI.DAL.Storage.UpdateSeatHold;
+using OrderAPI.Domain.Enums;
+using OrderAPI.Domain.Storage.GetOrderById;
+using OrderAPI.Domain.Storage.UpdateOrder;
+using OrderAPI.Domain.Storage.UpdateSeatHold;
 using OrderAPI.Domain.Exceptions;
 
 namespace OrderAPI.Domain.UseCases.CancelOrder

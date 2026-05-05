@@ -1,5 +1,5 @@
 using MediatR;
-using OrderAPI.Core.Models;
+using OrderAPI.Domain.Models;
 
 namespace OrderAPI.Domain.UseCases.AddToCart
 {

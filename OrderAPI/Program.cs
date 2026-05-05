@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using OrderAPI.DAL;
 using OrderAPI.DAL.Storage.GetSeatStatuses;
+using OrderAPI.Domain.Storage.GetSeatStatuses;
 using OrderAPI.Domain.Services;
 using OrderAPI.Domain.UseCases.GetCart;
 using OrderAPI.Middleware;

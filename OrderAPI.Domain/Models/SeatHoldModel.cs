@@ -1,0 +1,15 @@
+using OrderAPI.Domain.Enums;
+
+namespace OrderAPI.Domain.Models
+{
+    public class SeatHoldModel
+    {
+        public Guid Id { get; set; }
+        public Guid? SeatId { get; set; }
+        public Guid? OderId { get; set; }
+        public ESeatSectionHoldStatus SeatHoldStatus { get; set; }
+        public DateTimeOffset HoldExpirationTime { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
+    }
+}

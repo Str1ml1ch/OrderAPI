@@ -1,5 +1,5 @@
 using MediatR;
-using OrderAPI.DAL.Storage.GetSeatStatuses;
+using OrderAPI.Domain.Storage.GetSeatStatuses;
 
 namespace OrderAPI.Domain.UseCases.GetSeatStatuses
 {

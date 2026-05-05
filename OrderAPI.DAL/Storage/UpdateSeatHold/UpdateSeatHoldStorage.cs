@@ -1,4 +1,5 @@
-﻿using OrderAPI.Core.Enums;
+using OrderAPI.Domain.Storage.UpdateSeatHold;
+using OrderAPI.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace OrderAPI.DAL.Storage.UpdateSeatHold

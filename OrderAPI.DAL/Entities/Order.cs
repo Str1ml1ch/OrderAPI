@@ -1,5 +1,5 @@
-﻿using Homework.Ticketing.System.Shared.Enums;
-using OrderAPI.Core.Enums;
+using Homework.Ticketing.System.Shared.Enums;
+using OrderAPI.Domain.Enums;
 using Shared.DAL.Entities;
 
 namespace OrderAPI.DAL.Entities

@@ -1,3 +1,4 @@
+using OrderAPI.Domain.Storage.RemoveSeatHold;
 using Microsoft.EntityFrameworkCore;
 
 namespace OrderAPI.DAL.Storage.RemoveSeatHold

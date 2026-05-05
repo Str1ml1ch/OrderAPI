@@ -1,7 +1,8 @@
-﻿using Homework.Ticketing.System.Shared.Models;
+using OrderAPI.Domain.Storage.GetSeatHolds;
+using Homework.Ticketing.System.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using OrderAPI.Core.Enums;
-using OrderAPI.Core.Models;
+using OrderAPI.Domain.Enums;
+using OrderAPI.Domain.Models;
 using OrderAPI.DAL.Specifications.SeatHolds;
 
 namespace OrderAPI.DAL.Storage.GetSeatHolds

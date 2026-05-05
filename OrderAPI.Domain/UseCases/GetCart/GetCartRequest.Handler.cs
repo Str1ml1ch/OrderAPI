@@ -1,6 +1,6 @@
 using MediatR;
-using OrderAPI.Core.Models;
-using OrderAPI.DAL.Storage.GetOrderById;
+using OrderAPI.Domain.Models;
+using OrderAPI.Domain.Storage.GetOrderById;
 using OrderAPI.Domain.Exceptions;
 
 namespace OrderAPI.Domain.UseCases.GetCart

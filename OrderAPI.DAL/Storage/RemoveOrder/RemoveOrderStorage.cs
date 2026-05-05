@@ -1,3 +1,4 @@
+using OrderAPI.Domain.Storage.RemoveOrder;
 using Microsoft.EntityFrameworkCore;
 
 namespace OrderAPI.DAL.Storage.RemoveOrder

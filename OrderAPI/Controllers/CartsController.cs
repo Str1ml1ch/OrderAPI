@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrderAPI.Core.Models;
+using OrderAPI.Domain.Models;
 using OrderAPI.Domain.UseCases.AddToCart;
 using OrderAPI.Domain.UseCases.BookCart;
 using OrderAPI.Domain.UseCases.GetCart;

@@ -1,6 +1,7 @@
-﻿using Homework.Ticketing.System.Shared.Enums;
+using OrderAPI.Domain.Storage.UpdateOrder;
+using Homework.Ticketing.System.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
-using OrderAPI.Core.Enums;
+using OrderAPI.Domain.Enums;
 
 namespace OrderAPI.DAL.Storage.UpdateOrder
 {

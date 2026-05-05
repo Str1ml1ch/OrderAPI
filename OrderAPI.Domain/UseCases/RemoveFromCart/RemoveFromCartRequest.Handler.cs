@@ -1,8 +1,8 @@
 using MediatR;
-using OrderAPI.DAL.Storage.GetOrderById;
-using OrderAPI.DAL.Storage.RemoveOrderItem;
-using OrderAPI.DAL.Storage.RemoveSeatHold;
-using OrderAPI.DAL.Storage.UpdateOrder;
+using OrderAPI.Domain.Storage.GetOrderById;
+using OrderAPI.Domain.Storage.RemoveOrderItem;
+using OrderAPI.Domain.Storage.RemoveSeatHold;
+using OrderAPI.Domain.Storage.UpdateOrder;
 using OrderAPI.Domain.Exceptions;
 
 namespace OrderAPI.Domain.UseCases.RemoveFromCart

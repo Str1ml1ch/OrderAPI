@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OrderAPI.Core.Models;
+using OrderAPI.Domain.Storage.GetOrderById;
+using Microsoft.EntityFrameworkCore;
+using OrderAPI.Domain.Models;
 
 namespace OrderAPI.DAL.Storage.GetOrderById
 {

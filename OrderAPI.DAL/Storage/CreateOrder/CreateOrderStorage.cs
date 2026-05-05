@@ -1,5 +1,6 @@
-﻿using Homework.Ticketing.System.Shared.Enums;
-using OrderAPI.Core.Enums;
+using OrderAPI.Domain.Storage.CreateOrder;
+using Homework.Ticketing.System.Shared.Enums;
+using OrderAPI.Domain.Enums;
 using OrderAPI.DAL.Entities;
 
 namespace OrderAPI.DAL.Storage.CreateOrder

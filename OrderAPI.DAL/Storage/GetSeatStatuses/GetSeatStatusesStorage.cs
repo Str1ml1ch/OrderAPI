@@ -1,5 +1,6 @@
+using OrderAPI.Domain.Storage.GetSeatStatuses;
 using Microsoft.EntityFrameworkCore;
-using OrderAPI.Core.Enums;
+using OrderAPI.Domain.Enums;
 
 namespace OrderAPI.DAL.Storage.GetSeatStatuses
 {
@@ -19,7 +20,6 @@ namespace OrderAPI.DAL.Storage.GetSeatStatuses
             var seatIdList = seatIds.ToList();
             var now = DateTimeOffset.UtcNow;
 
-            // Sold: seat appears in a confirmed order item
             var soldSeatIds = await _context.OrderItems
                 .Where(oi => oi.SeatId.HasValue
                     && seatIdList.Contains(oi.SeatId.Value)
@@ -28,7 +28,6 @@ namespace OrderAPI.DAL.Storage.GetSeatStatuses
                 .Distinct()
                 .ToListAsync(ct);
 
-            // Reserved: active non-expired SeatHold
             var reservedSeatIds = await _context.SeatHolds
                 .Where(sh => sh.SeatId.HasValue
                     && seatIdList.Contains(sh.SeatId.Value)

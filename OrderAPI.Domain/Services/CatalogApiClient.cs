@@ -1,5 +1,5 @@
 using Homework.Ticketing.System.Shared.Models;
-using OrderAPI.Core.Models;
+using OrderAPI.Domain.Models;
 using System.Net.Http.Json;
 
 namespace OrderAPI.Domain.Services

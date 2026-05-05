@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using OrderAPI.Core.Enums;
+using OrderAPI.Domain.Enums;
 using OrderAPI.DAL.Entities;
 
 namespace OrderAPI.DAL.Specifications.SectionHolds

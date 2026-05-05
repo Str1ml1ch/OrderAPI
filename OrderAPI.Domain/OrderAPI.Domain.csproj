@@ -14,8 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OrderAPI.Core\OrderAPI.Core.csproj" />
-    <ProjectReference Include="..\OrderAPI.DAL\OrderAPI.DAL.csproj" />
   </ItemGroup>
 
 </Project>
