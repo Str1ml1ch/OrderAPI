@@ -1,9 +1,10 @@
 using Moq;
 using OrderAPI.Domain.Enums;
 using OrderAPI.Domain.Models;
+using OrderAPI.Domain.Services;
+using OrderAPI.Domain.Storage.AddSeatToCart;
 using OrderAPI.Domain.Storage.CreateOrder;
 using OrderAPI.Domain.Storage.CreateOrderItem;
-using OrderAPI.Domain.Storage.CreateSeatHold;
 using OrderAPI.Domain.Storage.GetOrderById;
 using OrderAPI.Domain.Storage.UpdateOrder;
 using OrderAPI.Domain.UseCases.AddToCart;
@@ -16,8 +17,9 @@ public class AddToCartRequestHandlerTests
     private readonly Mock<IGetOrderByIdStorage> _orderStorageMock = new();
     private readonly Mock<ICreateOrderStorage> _createOrderMock = new();
     private readonly Mock<ICreateOrderItemStorage> _createItemMock = new();
-    private readonly Mock<ICreateSeatHoldStorage> _createHoldMock = new();
+    private readonly Mock<IAddSeatToCartStorage> _addSeatToCartMock = new();
     private readonly Mock<IUpdateOrderStorage> _updateOrderMock = new();
+    private readonly Mock<IEventCacheInvalidator> _cacheInvalidatorMock = new();
     private readonly AddToCartRequestHandler _sut;
 
     public AddToCartRequestHandlerTests()
@@ -26,8 +28,9 @@ public class AddToCartRequestHandlerTests
             _orderStorageMock.Object,
             _createOrderMock.Object,
             _createItemMock.Object,
-            _createHoldMock.Object,
-            _updateOrderMock.Object);
+            _addSeatToCartMock.Object,
+            _updateOrderMock.Object,
+            _cacheInvalidatorMock.Object);
     }
 
     private AddToCartRequest BuildRequest(Guid? cartId = null)
@@ -81,9 +84,9 @@ public class AddToCartRequestHandlerTests
             .Setup(s => s.CreateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<decimal>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Guid.NewGuid());
 
-        _createHoldMock
-            .Setup(s => s.CreateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Guid.NewGuid());
+        _addSeatToCartMock
+            .Setup(s => s.CreateSeatHoldAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
 
         _updateOrderMock
             .Setup(s => s.UpdateAmountAsync(It.IsAny<Guid>(), It.IsAny<decimal>(), It.IsAny<ECurrency>(), It.IsAny<CancellationToken>()))
@@ -110,9 +113,9 @@ public class AddToCartRequestHandlerTests
             .Setup(s => s.CreateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<decimal>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Guid.NewGuid());
 
-        _createHoldMock
-            .Setup(s => s.CreateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Guid.NewGuid());
+        _addSeatToCartMock
+            .Setup(s => s.CreateSeatHoldAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
 
         _updateOrderMock
             .Setup(s => s.UpdateAmountAsync(It.IsAny<Guid>(), It.IsAny<decimal>(), It.IsAny<ECurrency>(), It.IsAny<CancellationToken>()))
@@ -140,9 +143,9 @@ public class AddToCartRequestHandlerTests
             .Setup(s => s.CreateAsync(request.CartId, request.Body.SectionId, request.Body.SeatId, request.Body.Price, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Guid.NewGuid());
 
-        _createHoldMock
-            .Setup(s => s.CreateAsync(request.CartId, request.Body.SeatId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Guid.NewGuid());
+        _addSeatToCartMock
+            .Setup(s => s.CreateSeatHoldAsync(request.CartId, request.Body.SeatId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
 
         _updateOrderMock
             .Setup(s => s.UpdateAmountAsync(It.IsAny<Guid>(), It.IsAny<decimal>(), It.IsAny<ECurrency>(), It.IsAny<CancellationToken>()))
@@ -153,7 +156,7 @@ public class AddToCartRequestHandlerTests
         _createItemMock.Verify(s => s.CreateAsync(
             request.CartId, request.Body.SectionId, request.Body.SeatId, request.Body.Price,
             It.IsAny<CancellationToken>()), Times.Once);
-        _createHoldMock.Verify(s => s.CreateAsync(
+        _addSeatToCartMock.Verify(s => s.CreateSeatHoldAsync(
             request.CartId, request.Body.SeatId, It.IsAny<DateTimeOffset>(),
             It.IsAny<CancellationToken>()), Times.Once);
     }

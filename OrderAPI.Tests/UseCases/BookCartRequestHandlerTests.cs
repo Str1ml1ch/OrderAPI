@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using OrderAPI.Domain.Enums;
 using OrderAPI.Domain.Models;
@@ -17,6 +18,7 @@ public class BookCartRequestHandlerTests
     private readonly Mock<IUpdateOrderStorage> _updateOrderMock = new();
     private readonly Mock<IUpdateSeatHoldStorage> _updateHoldMock = new();
     private readonly Mock<IPaymentApiClient> _paymentMock = new();
+    private readonly Mock<IEventCacheInvalidator> _cacheInvalidatorMock = new();
     private readonly BookCartRequestHandler _sut;
 
     public BookCartRequestHandlerTests()
@@ -25,7 +27,9 @@ public class BookCartRequestHandlerTests
             _orderStorageMock.Object,
             _updateOrderMock.Object,
             _updateHoldMock.Object,
-            _paymentMock.Object);
+            _paymentMock.Object,
+            _cacheInvalidatorMock.Object,
+            NullLogger<BookCartRequestHandler>.Instance);
     }
 
     private OrderDetailModel BuildOrder(Guid id, EOrderStatus status = EOrderStatus.Pending)

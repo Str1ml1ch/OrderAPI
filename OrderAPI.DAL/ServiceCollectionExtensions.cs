@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OrderAPI.DAL.Storage.AddSeatToCart;
+using OrderAPI.Domain.Storage.AddSeatToCart;
 using OrderAPI.DAL.Storage.CreateOrder;
 using OrderAPI.Domain.Storage.CreateOrder;
 using OrderAPI.DAL.Storage.CreateOrderItem;
@@ -48,6 +50,8 @@ namespace OrderAPI.DAL
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             return services
+                .AddScoped<IAddSeatToCartStorage, AddSeatToCartPessimisticStorage>()
+                // .AddScoped<IAddSeatToCartStorage, AddSeatToCartOptimisticStorage>()
                 .AddScoped<ICreateOrderStorage, CreateOrderStorage>()
                 .AddScoped<ICreateOrderItemStorage, CreateOrderItemStorage>()
                 .AddScoped<ICreateSeatHoldStorage, CreateSeatHoldStorage>()

@@ -4,6 +4,7 @@ using OrderAPI.DAL;
 using OrderAPI.DAL.Storage.GetSeatStatuses;
 using OrderAPI.Domain.Storage.GetSeatStatuses;
 using OrderAPI.Domain.Services;
+using OrderAPI.Services;
 using OrderAPI.Domain.UseCases.GetCart;
 using OrderAPI.Middleware;
 using System.Text;
@@ -29,6 +30,13 @@ namespace OrderAPI
             builder.Services.AddStorage(builder.Configuration.GetConnectionString("DefaultConnection")!)
                 .AddServices();
 
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetConnectionString("Redis")
+                    ?? throw new InvalidOperationException("Redis connection string is missing.");
+                options.InstanceName = "OrderAPI:";
+            });
+
             builder.Services.AddScoped<IGetSeatStatusesStorage, GetSeatStatusesStorage>();
 
             builder.Services.AddHttpClient("PaymentApi", client =>
@@ -36,7 +44,7 @@ namespace OrderAPI
                 client.BaseAddress = new Uri(builder.Configuration["PaymentApi:BaseUrl"]!);
             });
             builder.Services.AddScoped<IPaymentApiClient, PaymentApiClient>();
-            builder.Services.AddScoped<IPaymentApiClient, PaymentApiClient>();
+            builder.Services.AddScoped<IEventCacheInvalidator, RedisEventCacheInvalidator>();
 
             builder.Services.AddAuthentication(options =>
             {

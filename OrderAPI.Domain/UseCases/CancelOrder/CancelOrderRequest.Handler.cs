@@ -1,5 +1,6 @@
 using MediatR;
 using OrderAPI.Domain.Enums;
+using OrderAPI.Domain.Services;
 using OrderAPI.Domain.Storage.GetOrderById;
 using OrderAPI.Domain.Storage.UpdateOrder;
 using OrderAPI.Domain.Storage.UpdateSeatHold;
@@ -12,15 +13,18 @@ namespace OrderAPI.Domain.UseCases.CancelOrder
         private readonly IGetOrderByIdStorage _orderStorage;
         private readonly IUpdateOrderStorage _updateOrderStorage;
         private readonly IUpdateSeatHoldStorage _updateHoldStorage;
+        private readonly IEventCacheInvalidator _cacheInvalidator;
 
         public CancelOrderRequestHandler(
             IGetOrderByIdStorage orderStorage,
             IUpdateOrderStorage updateOrderStorage,
-            IUpdateSeatHoldStorage updateHoldStorage)
+            IUpdateSeatHoldStorage updateHoldStorage,
+            IEventCacheInvalidator cacheInvalidator)
         {
             _orderStorage = orderStorage;
             _updateOrderStorage = updateOrderStorage;
             _updateHoldStorage = updateHoldStorage;
+            _cacheInvalidator = cacheInvalidator;
         }
 
         public async Task<bool> Handle(CancelOrderRequest request, CancellationToken cancellationToken)
@@ -30,6 +34,9 @@ namespace OrderAPI.Domain.UseCases.CancelOrder
 
             await _updateHoldStorage.UpdateAllByOrderIdAsync(request.OrderId, ESeatSectionHoldStatus.Released, cancellationToken);
             await _updateOrderStorage.UpdateStatusAsync(request.OrderId, EOrderStatus.Cancelled, cancellationToken);
+
+            await _cacheInvalidator.InvalidateAsync(cancellationToken);
+
             return true;
         }
     }

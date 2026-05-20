@@ -1,28 +1,41 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using OrderAPI.Domain.Enums;
-using OrderAPI.Domain.Models;
 using OrderAPI.DAL;
 using OrderAPI.DAL.Entities;
 using OrderAPI.DAL.Storage.GetOrderById;
-using OrderAPI.Domain.Storage.GetOrderById;
+using OrderAPI.Tests.DAL.Infrastructure;
 
 namespace OrderAPI.Tests.DAL;
 
-public class GetOrderByIdStorageTests : IDisposable
+[Collection("SqlServer")]
+public class GetOrderByIdStorageTests : IAsyncLifetime
 {
-    private readonly OrderDbContext _context;
-    private readonly GetOrderByIdStorage _sut;
+    private readonly SqlServerContainerFixture _fixture;
+    private OrderDbContext _context = null!;
+    private IDbContextTransaction _transaction = null!;
+    private GetOrderByIdStorage _sut = null!;
 
-    public GetOrderByIdStorageTests()
+    public GetOrderByIdStorageTests(SqlServerContainerFixture fixture)
     {
-        var options = new DbContextOptionsBuilder<OrderDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-        _context = new OrderDbContext(options);
+        _fixture = fixture;
+    }
+
+    public async Task InitializeAsync()
+    {
+        _context = new OrderDbContext(
+            new DbContextOptionsBuilder<OrderDbContext>()
+                .UseSqlServer(_fixture.ConnectionString)
+                .Options);
+        _transaction = await _context.Database.BeginTransactionAsync();
         _sut = new GetOrderByIdStorage(_context);
     }
 
-    public void Dispose() => _context.Dispose();
+    public async Task DisposeAsync()
+    {
+        await _transaction.RollbackAsync();
+        await _context.DisposeAsync();
+    }
 
     private Order CreateOrder(Guid? id = null, EOrderStatus status = EOrderStatus.Pending)
         => new()

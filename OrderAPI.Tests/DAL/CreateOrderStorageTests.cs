@@ -1,26 +1,40 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using OrderAPI.Domain.Enums;
 using OrderAPI.DAL;
 using OrderAPI.DAL.Storage.CreateOrder;
-using OrderAPI.Domain.Storage.CreateOrder;
+using OrderAPI.Tests.DAL.Infrastructure;
 
 namespace OrderAPI.Tests.DAL;
 
-public class CreateOrderStorageTests : IDisposable
+[Collection("SqlServer")]
+public class CreateOrderStorageTests : IAsyncLifetime
 {
-    private readonly OrderDbContext _context;
-    private readonly CreateOrderStorage _sut;
+    private readonly SqlServerContainerFixture _fixture;
+    private OrderDbContext _context = null!;
+    private IDbContextTransaction _transaction = null!;
+    private CreateOrderStorage _sut = null!;
 
-    public CreateOrderStorageTests()
+    public CreateOrderStorageTests(SqlServerContainerFixture fixture)
     {
-        var options = new DbContextOptionsBuilder<OrderDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-        _context = new OrderDbContext(options);
+        _fixture = fixture;
+    }
+
+    public async Task InitializeAsync()
+    {
+        _context = new OrderDbContext(
+            new DbContextOptionsBuilder<OrderDbContext>()
+                .UseSqlServer(_fixture.ConnectionString)
+                .Options);
+        _transaction = await _context.Database.BeginTransactionAsync();
         _sut = new CreateOrderStorage(_context);
     }
 
-    public void Dispose() => _context.Dispose();
+    public async Task DisposeAsync()
+    {
+        await _transaction.RollbackAsync();
+        await _context.DisposeAsync();
+    }
 
     [Fact]
     public async Task CreateAsync_PersistsOrder_AndReturnsNewId()

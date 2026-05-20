@@ -33,6 +33,13 @@ namespace OrderAPI.Middleware
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new { message = ex.Message });
             }
+            catch (SeatAlreadyBookedException ex)
+            {
+                _logger.LogWarning(ex, "Seat already booked: {Message}", ex.Message);
+                context.Response.StatusCode = StatusCodes.Status409Conflict;
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsJsonAsync(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled exception");

@@ -1,5 +1,6 @@
 using Moq;
 using OrderAPI.Domain.Enums;
+using OrderAPI.Domain.Services;
 using OrderAPI.Domain.Storage.GetOrderById;
 using OrderAPI.Domain.Storage.UpdateOrder;
 using OrderAPI.Domain.Storage.UpdateSeatHold;
@@ -13,6 +14,7 @@ public class CancelOrderRequestHandlerTests
     private readonly Mock<IGetOrderByIdStorage> _orderStorageMock = new();
     private readonly Mock<IUpdateOrderStorage> _updateOrderMock = new();
     private readonly Mock<IUpdateSeatHoldStorage> _updateHoldMock = new();
+    private readonly Mock<IEventCacheInvalidator> _cacheInvalidatorMock = new();
     private readonly CancelOrderRequestHandler _sut;
 
     public CancelOrderRequestHandlerTests()
@@ -20,7 +22,8 @@ public class CancelOrderRequestHandlerTests
         _sut = new CancelOrderRequestHandler(
             _orderStorageMock.Object,
             _updateOrderMock.Object,
-            _updateHoldMock.Object);
+            _updateHoldMock.Object,
+            _cacheInvalidatorMock.Object);
     }
 
     [Fact]

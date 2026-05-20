@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
@@ -34,6 +35,10 @@ public class OrderApiFactory : WebApplicationFactory<Program>
 
             services.RemoveAll<IPaymentApiClient>();
             services.AddScoped<IPaymentApiClient>(_ => PaymentClientMock.Object);
+
+            // Replace Redis with in-memory distributed cache for tests
+            services.RemoveAll<IDistributedCache>();
+            services.AddDistributedMemoryCache();
         });
 
         builder.UseEnvironment("Test");

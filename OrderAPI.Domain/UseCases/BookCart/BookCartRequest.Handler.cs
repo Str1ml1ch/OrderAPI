@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OrderAPI.Domain.Enums;
 using OrderAPI.Domain.Models;
 using OrderAPI.Domain.Storage.GetOrderById;
@@ -15,17 +16,23 @@ namespace OrderAPI.Domain.UseCases.BookCart
         private readonly IUpdateOrderStorage _updateOrderStorage;
         private readonly IUpdateSeatHoldStorage _updateHoldStorage;
         private readonly IPaymentApiClient _paymentClient;
+        private readonly IEventCacheInvalidator _cacheInvalidator;
+        private readonly ILogger<BookCartRequestHandler> _logger;
 
         public BookCartRequestHandler(
             IGetOrderByIdStorage orderStorage,
             IUpdateOrderStorage updateOrderStorage,
             IUpdateSeatHoldStorage updateHoldStorage,
-            IPaymentApiClient paymentClient)
+            IPaymentApiClient paymentClient,
+            IEventCacheInvalidator cacheInvalidator,
+            ILogger<BookCartRequestHandler> logger)
         {
             _orderStorage = orderStorage;
             _updateOrderStorage = updateOrderStorage;
             _updateHoldStorage = updateHoldStorage;
             _paymentClient = paymentClient;
+            _cacheInvalidator = cacheInvalidator;
+            _logger = logger;
         }
 
         public async Task<BookCartResponseModel> Handle(BookCartRequest request, CancellationToken cancellationToken)
@@ -38,6 +45,16 @@ namespace OrderAPI.Domain.UseCases.BookCart
             await _updateOrderStorage.UpdateStatusAsync(request.CartId, EOrderStatus.Confirmed, cancellationToken);
 
             var paymentId = await _paymentClient.CreatePaymentAsync(request.CartId, order.TotalAmount, order.Currency, cancellationToken);
+
+            try
+            {
+                await _cacheInvalidator.InvalidateAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Cache invalidation failed for cart {CartId}. Stale cache will expire naturally.", request.CartId);
+            }
+
             return new BookCartResponseModel { PaymentId = paymentId };
         }
     }

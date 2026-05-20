@@ -1,9 +1,10 @@
 using MediatR;
 using OrderAPI.Domain.Enums;
 using OrderAPI.Domain.Models;
+using OrderAPI.Domain.Services;
+using OrderAPI.Domain.Storage.AddSeatToCart;
 using OrderAPI.Domain.Storage.CreateOrder;
 using OrderAPI.Domain.Storage.CreateOrderItem;
-using OrderAPI.Domain.Storage.CreateSeatHold;
 using OrderAPI.Domain.Storage.GetOrderById;
 using OrderAPI.Domain.Storage.UpdateOrder;
 
@@ -14,21 +15,24 @@ namespace OrderAPI.Domain.UseCases.AddToCart
         private readonly IGetOrderByIdStorage _orderStorage;
         private readonly ICreateOrderStorage _createOrderStorage;
         private readonly ICreateOrderItemStorage _createItemStorage;
-        private readonly ICreateSeatHoldStorage _createHoldStorage;
+        private readonly IAddSeatToCartStorage _addSeatToCartStorage;
         private readonly IUpdateOrderStorage _updateOrderStorage;
+        private readonly IEventCacheInvalidator _cacheInvalidator;
 
         public AddToCartRequestHandler(
             IGetOrderByIdStorage orderStorage,
             ICreateOrderStorage createOrderStorage,
             ICreateOrderItemStorage createItemStorage,
-            ICreateSeatHoldStorage createHoldStorage,
-            IUpdateOrderStorage updateOrderStorage)
+            IAddSeatToCartStorage addSeatToCartStorage,
+            IUpdateOrderStorage updateOrderStorage,
+            IEventCacheInvalidator cacheInvalidator)
         {
             _orderStorage = orderStorage;
             _createOrderStorage = createOrderStorage;
             _createItemStorage = createItemStorage;
-            _createHoldStorage = createHoldStorage;
+            _addSeatToCartStorage = addSeatToCartStorage;
             _updateOrderStorage = updateOrderStorage;
+            _cacheInvalidator = cacheInvalidator;
         }
 
         public async Task<CartModel> Handle(AddToCartRequest request, CancellationToken cancellationToken)
@@ -44,10 +48,14 @@ namespace OrderAPI.Domain.UseCases.AddToCart
             }
 
             await _createItemStorage.CreateAsync(request.CartId, body.SectionId, body.SeatId, body.Price, cancellationToken);
-            await _createHoldStorage.CreateAsync(request.CartId, body.SeatId, DateTimeOffset.UtcNow.AddMinutes(30), cancellationToken);
+
+            await _addSeatToCartStorage.CreateSeatHoldAsync(
+                request.CartId, body.SeatId, DateTimeOffset.UtcNow.AddMinutes(30), cancellationToken);
 
             var newTotal = order!.Items.Sum(i => i.Price) + body.Price;
             await _updateOrderStorage.UpdateAmountAsync(request.CartId, newTotal, body.Currency, cancellationToken);
+
+            await _cacheInvalidator.InvalidateAsync(cancellationToken);
 
             var updated = await _orderStorage.GetOrderByIdAsync(request.CartId, cancellationToken);
             return new CartModel
