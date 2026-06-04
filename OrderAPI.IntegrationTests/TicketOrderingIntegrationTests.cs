@@ -11,22 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace OrderAPI.IntegrationTests;
 
-public class TicketOrderingIntegrationTests : IDisposable
+public class TicketOrderingIntegrationTests : IClassFixture<OrderApiFactory>
 {
     private readonly OrderApiFactory _factory;
     private readonly HttpClient _client;
     private Guid _currentUserId;
 
-    public TicketOrderingIntegrationTests()
+    public TicketOrderingIntegrationTests(OrderApiFactory factory)
     {
-        _factory = new OrderApiFactory();
-        _client = _factory.CreateClient();
-    }
-
-    public void Dispose()
-    {
-        _client.Dispose();
-        _factory.Dispose();
+        _factory = factory;
+        _client = factory.CreateClient();
     }
 
 

@@ -7,12 +7,13 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using OrderAPI.DAL;
 using OrderAPI.Domain.Services;
+using Testcontainers.MsSql;
 
 namespace OrderAPI.IntegrationTests;
 
-public class OrderApiFactory : WebApplicationFactory<Program>
+public class OrderApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly string _dbName = $"OrderIntegrationTests_{Guid.NewGuid()}";
+    private readonly MsSqlContainer _container = new MsSqlBuilder().Build();
 
     public Mock<IPaymentApiClient> PaymentClientMock { get; } = new();
 
@@ -31,7 +32,7 @@ public class OrderApiFactory : WebApplicationFactory<Program>
                 services.Remove(d);
 
             services.AddDbContext<OrderDbContext>(options =>
-                options.UseInMemoryDatabase(_dbName));
+                options.UseSqlServer(_container.GetConnectionString()));
 
             services.RemoveAll<IPaymentApiClient>();
             services.AddScoped<IPaymentApiClient>(_ => PaymentClientMock.Object);
@@ -42,5 +43,19 @@ public class OrderApiFactory : WebApplicationFactory<Program>
         });
 
         builder.UseEnvironment("Test");
+    }
+
+    async Task IAsyncLifetime.InitializeAsync()
+    {
+        await _container.StartAsync();
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+        await db.Database.MigrateAsync();
+    }
+
+    async Task IAsyncLifetime.DisposeAsync()
+    {
+        await base.DisposeAsync();
+        await _container.DisposeAsync();
     }
 }
