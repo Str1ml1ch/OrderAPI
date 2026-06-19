@@ -1,5 +1,6 @@
 using MediatR;
 using OrderAPI.Domain.Enums;
+using OrderAPI.Domain.Messaging;
 using OrderAPI.Domain.Models;
 using OrderAPI.Domain.Services;
 using OrderAPI.Domain.Storage.AddSeatToCart;
@@ -18,6 +19,7 @@ namespace OrderAPI.Domain.UseCases.AddToCart
         private readonly IAddSeatToCartStorage _addSeatToCartStorage;
         private readonly IUpdateOrderStorage _updateOrderStorage;
         private readonly IEventCacheInvalidator _cacheInvalidator;
+        private readonly INotificationPublisher _notificationPublisher;
 
         public AddToCartRequestHandler(
             IGetOrderByIdStorage orderStorage,
@@ -25,7 +27,8 @@ namespace OrderAPI.Domain.UseCases.AddToCart
             ICreateOrderItemStorage createItemStorage,
             IAddSeatToCartStorage addSeatToCartStorage,
             IUpdateOrderStorage updateOrderStorage,
-            IEventCacheInvalidator cacheInvalidator)
+            IEventCacheInvalidator cacheInvalidator,
+            INotificationPublisher notificationPublisher)
         {
             _orderStorage = orderStorage;
             _createOrderStorage = createOrderStorage;
@@ -33,6 +36,7 @@ namespace OrderAPI.Domain.UseCases.AddToCart
             _addSeatToCartStorage = addSeatToCartStorage;
             _updateOrderStorage = updateOrderStorage;
             _cacheInvalidator = cacheInvalidator;
+            _notificationPublisher = notificationPublisher;
         }
 
         public async Task<CartModel> Handle(AddToCartRequest request, CancellationToken cancellationToken)
@@ -56,6 +60,27 @@ namespace OrderAPI.Domain.UseCases.AddToCart
             await _updateOrderStorage.UpdateAmountAsync(request.CartId, newTotal, body.Currency, cancellationToken);
 
             await _cacheInvalidator.InvalidateAsync(cancellationToken);
+
+            await _notificationPublisher.PublishAsync(new NotificationMessage
+            {
+                NotificationId = Guid.NewGuid(),
+                OperationName = "TicketAddedToCheckout",
+                Timestamp = DateTimeOffset.UtcNow,
+                Parameters = new NotificationParameters
+                {
+                    CustomerEmail = request.CustomerEmail,
+                    CustomerName = request.CustomerName ?? request.CustomerEmail
+                },
+                Content = new NotificationContent
+                {
+                    OrderAmount = newTotal,
+                    Currency = body.Currency.ToString(),
+                    EventId = body.EventId,
+                    SectionId = body.SectionId,
+                    SeatId = body.SeatId,
+                    OrderSummary = $"Seat {body.SeatId} in section {body.SectionId} added to cart"
+                }
+            }, cancellationToken);
 
             var updated = await _orderStorage.GetOrderByIdAsync(request.CartId, cancellationToken);
             return new CartModel

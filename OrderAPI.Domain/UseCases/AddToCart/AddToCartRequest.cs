@@ -8,5 +8,7 @@ namespace OrderAPI.Domain.UseCases.AddToCart
         public Guid CartId { get; set; }
         public Guid CustomerId { get; set; }
         public required AddToCartRequestBody Body { get; set; }
+        public string CustomerEmail { get; set; } = null!;
+        public string? CustomerName { get; set; }
     }
 }

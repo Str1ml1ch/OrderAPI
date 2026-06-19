@@ -39,10 +39,15 @@ namespace OrderAPI.Controllers
             if (!Guid.TryParse(userIdStr, out var customerId))
                 return Unauthorized();
 
+            var customerEmail = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
+            var customerName = User.FindFirstValue(ClaimTypes.Name);
+
             var cart = await _mediator.Send(new AddToCartRequest
             {
                 CartId = cart_id,
                 CustomerId = customerId,
+                CustomerEmail = customerEmail,
+                CustomerName = customerName,
                 Body = body
             }, cancellationToken);
             return Ok(cart);
@@ -66,7 +71,14 @@ namespace OrderAPI.Controllers
         [HttpPut("{cart_id}/book")]
         public async Task<IActionResult> BookCart(Guid cart_id, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new BookCartRequest { CartId = cart_id }, cancellationToken);
+            var customerEmail = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
+            var customerName = User.FindFirstValue(ClaimTypes.Name);
+            var result = await _mediator.Send(new BookCartRequest
+            {
+                CartId = cart_id,
+                CustomerEmail = customerEmail,
+                CustomerName = customerName
+            }, cancellationToken);
             return Ok(result);
         }
     }

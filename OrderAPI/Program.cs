@@ -4,6 +4,8 @@ using OrderAPI.DAL;
 using OrderAPI.DAL.Storage.GetSeatStatuses;
 using OrderAPI.Domain.Storage.GetSeatStatuses;
 using OrderAPI.Domain.Services;
+using OrderAPI.Domain.Messaging;
+using OrderAPI.Messaging;
 using OrderAPI.Services;
 using OrderAPI.Domain.UseCases.GetCart;
 using OrderAPI.Middleware;
@@ -45,6 +47,7 @@ namespace OrderAPI
             });
             builder.Services.AddScoped<IPaymentApiClient, PaymentApiClient>();
             builder.Services.AddScoped<IEventCacheInvalidator, RedisEventCacheInvalidator>();
+            builder.Services.AddSingleton<INotificationPublisher, ServiceBusNotificationPublisher>();
 
             builder.Services.AddAuthentication(options =>
             {
